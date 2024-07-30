@@ -1,0 +1,9 @@
+/******* Layout *******/
+
+.desktop-frame {
+  width: min(1440px, 100vw);
+}
+
+.desktop-frame > .desktop-content-container {
+  width: min(1128px, 78.333vw);
+}

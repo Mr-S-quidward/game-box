@@ -1,0 +1,28 @@
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background-color: azure;
+}
+
+.app-menu > ul {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: min(16px, 1.111vw);
+}
+
+.app-menu > ul > li > button {
+  text-transform: capitalize;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.active-link {
+  -webkit-text-fill-color: red;
+}

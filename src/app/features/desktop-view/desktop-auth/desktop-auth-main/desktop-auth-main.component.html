@@ -1,0 +1,20 @@
+<section class="desktop-frame centered">
+  <div class="desktop-content-container centered">
+    <ul class="centered">
+      @for (route of authRoutes; track route.path) {
+        <li class="cursor-pointer"
+            [routerLink]="route.path">
+          {{ route.path }}
+        </li>
+      }
+    </ul>
+    <p>
+      <sub>you don't have an account?
+        <a class="cursor-pointer"
+           (click)="handleActions(AuthActionModel.signInAsGuest, 'menu')">
+          sign in as a guest
+        </a>
+      </sub>
+    </p>
+  </div>
+</section>

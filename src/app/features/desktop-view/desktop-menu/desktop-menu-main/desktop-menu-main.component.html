@@ -1,0 +1,10 @@
+<nav class="app-menu">
+  <ul>
+    @for (item of appMenu; track item.path) {
+      <li class="cursor-pointer" [routerLink]="item.path">
+        {{ item.path }}
+      </li>
+    }
+    <li>exit</li>
+  </ul>
+</nav>

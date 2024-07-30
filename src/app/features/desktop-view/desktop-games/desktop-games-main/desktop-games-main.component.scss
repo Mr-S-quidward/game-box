@@ -1,0 +1,22 @@
+.desktop-frame {
+  height: 100%;
+  background-color: red;
+}
+
+.desktop-frame > .desktop-content-container {
+  height: 100%;
+  background-color: azure;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.desktop-frame > .desktop-content-container > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: min(16px, 1.111vw);
+}

@@ -1,0 +1,15 @@
+<section class="desktop-frame centered">
+  <div class="desktop-content-container centered">
+    <ul>
+      @for (game of gameMenu; track game.path) {
+        <li class="cursor-pointer"
+            [routerLink]="game.path">
+          {{ game.path }}
+        </li>
+      } @empty {
+        no games found!
+      }
+    </ul>
+  </div>
+</section>
+

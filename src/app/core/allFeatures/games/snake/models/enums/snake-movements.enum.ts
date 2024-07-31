@@ -1,6 +1,6 @@
 export enum SnakeMovementsEnum {
-  up,
-  down,
-  left,
-  right,
+  up = "ArrowUp",
+  down = "ArrowDown",
+  left = "ArrowLeft",
+  right = "ArrowRight",
 }

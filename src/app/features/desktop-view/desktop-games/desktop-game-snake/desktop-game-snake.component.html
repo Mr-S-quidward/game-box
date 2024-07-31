@@ -1,1 +1,7 @@
-<p>desktop-snake-game works!</p>
+<section class="desktop-frame centered">
+  <div class="desktop-content-container centered">
+    <snake-board/>
+    <snake [snake$]="snake$" (snakeChangeDirectionEmitter)="manageActions($event)"/>
+    <snake-food [food$]="food$"/>
+  </div>
+</section>

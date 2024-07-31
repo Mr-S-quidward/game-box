@@ -12,19 +12,22 @@ export const initialSnakeState: SnakeStateModel = {
       y: window.innerHeight / 2,
     },
     {
-      x: (window.innerWidth / 2) - 1,
+      x: (window.innerWidth / 2) - 20,
       y: window.innerHeight / 2,
     },
     {
-      x: (window.innerWidth / 2) - 2,
+      x: (window.innerWidth / 2) - 40,
       y: window.innerHeight / 2,
     },
     {
-      x: (window.innerWidth / 2) - 3,
+      x: (window.innerWidth / 2) - 60,
       y: window.innerHeight / 2,
     },
   ],
-  food: {x: 15, y: 15},
+  food: {
+    x: (window.innerWidth / 2) + 60,
+    y: window.innerHeight / 2,
+  },
   score: 0,
   lives: 5,
   direction: SnakeMovementsEnum.right,
@@ -50,16 +53,16 @@ export const snakeReducer = createReducer(
     let newHead;
     switch (state.direction) {
       case SnakeMovementsEnum.up:
-        newHead = {x: head.x, y: head.y - 1};
+        newHead = {x: head.x, y: head.y - 20};
         break;
       case SnakeMovementsEnum.down:
-        newHead = {x: head.x, y: head.y + 1};
+        newHead = {x: head.x, y: head.y + 20};
         break;
       case SnakeMovementsEnum.left:
-        newHead = {x: head.x - 1, y: head.y};
+        newHead = {x: head.x - 20, y: head.y};
         break;
       case SnakeMovementsEnum.right:
-        newHead = {x: head.x + 1, y: head.y};
+        newHead = {x: head.x + 20, y: head.y};
         break;
     }
 
@@ -86,6 +89,10 @@ export const snakeReducer = createReducer(
     lives: state.lives - 1,
     isPlaying: state.lives > 1,
   })),
+  on(SnakeActions.endGame, state => ({
+    ...state,
+    isPlaying: false,
+  })),
 )
 
 export function SnakeReducer(state: any, action: any) {
@@ -93,5 +100,5 @@ export function SnakeReducer(state: any, action: any) {
 }
 
 function generateNewFood(): IPosition {
-  return {x: Math.floor(Math.random() * 20), y: Math.floor(Math.random() * 20)};
+  return {x: Math.floor(Math.random() * window.innerWidth), y: Math.floor(Math.random() * window.innerHeight)};
 }

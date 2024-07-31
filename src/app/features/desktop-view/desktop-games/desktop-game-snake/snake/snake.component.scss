@@ -1,0 +1,12 @@
+.snake-segments {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: black;
+
+  &:first-child {
+    background-color: red;
+  }
+}
+
+

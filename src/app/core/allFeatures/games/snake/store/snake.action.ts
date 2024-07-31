@@ -7,3 +7,4 @@ export const changeDirection = createAction('[Snake] Change Direction', props<{ 
 export const moveSnake = createAction('[Snake] Move Snake');
 export const eatFood = createAction('[Snake] Eat Food');
 export const loseLife = createAction('[Snake] Lose Life');
+export const endGame = createAction('[Snake] End Game');

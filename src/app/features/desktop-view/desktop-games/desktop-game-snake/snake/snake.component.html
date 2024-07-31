@@ -1,0 +1,7 @@
+@for (segment of (snake$ | async); track segment; ) {
+  <div [style.left.px]="segment.x" [style.top.px]="segment.y" class="snake-segments">
+  </div>
+}
+<div>
+  {{ (snake$ | async)![0] | json }}
+</div>

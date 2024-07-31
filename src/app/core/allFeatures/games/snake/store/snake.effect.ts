@@ -1,4 +1,4 @@
-import {Injectable} from "@angular/core";
+import {inject, Injectable} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {Store} from "@ngrx/store";
 import {SnakeStateModel} from "../models/snake-state.model";
@@ -9,9 +9,10 @@ import {IPosition} from "../../../../models/interfaces/position.interface";
 
 @Injectable()
 export class SnakeEffect {
+  actions$ = inject(Actions);
 
   constructor(
-    private actions$: Actions,
+    // private actions$: Actions,
     private snakeStore: Store<{ snake: SnakeStateModel }>,
   ) {
   }

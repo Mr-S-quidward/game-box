@@ -88,6 +88,10 @@ export const snakeReducer = createReducer(
   })),
 )
 
+export function SnakeReducer(state: any, action: any) {
+  return snakeReducer(state, action);
+}
+
 function generateNewFood(): IPosition {
   return {x: Math.floor(Math.random() * 20), y: Math.floor(Math.random() * 20)};
 }

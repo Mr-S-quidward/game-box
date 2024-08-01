@@ -1,1 +1,17 @@
-<p>snake-board works!</p>
+<div class="snake-board">
+  <div style="width: 100%; height: 10%; position: absolute; top: 0;">
+    <span>
+    Score: {{ score$ | async }}
+    </span>
+    <span>
+    Lives: {{ lives$ | async }}
+    </span>
+    <ng-content select="[isPlaying]"></ng-content>
+  </div>
+  <div class="snake-crawling-field-frame">
+    <div class="snake-crawling-field" #snake_crawling_field>
+      <ng-content select="[food]"></ng-content>
+      <ng-content select="[snake]"></ng-content>
+    </div>
+  </div>
+</div>

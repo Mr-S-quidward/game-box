@@ -1,0 +1,19 @@
+.snake-board {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  background-color: lightpink;
+}
+
+.snake-crawling-field-frame {
+  height: 90%;
+  width: 100%;
+  position: absolute;
+  top: 10%;
+}
+
+.snake-crawling-field {
+  background-color: hotpink;
+  height: 100%;
+  width: 100%;
+}

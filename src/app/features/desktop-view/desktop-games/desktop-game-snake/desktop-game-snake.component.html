@@ -1,7 +1,11 @@
 <section class="desktop-frame centered">
   <div class="desktop-content-container centered">
-    <snake-board/>
-    <snake [snake$]="snake$" (snakeChangeDirectionEmitter)="manageActions($event)"/>
-    <snake-food [food$]="food$"/>
+    <snake-board [lives$]="lives$" [score$]="score$" (snakeBoardInitializeEmitter)="onStartGame($event)">
+      <div isPlaying>
+        Running? {{ isPlaying$ | async }}
+      </div>
+      <snake [snake$]="snake$" (snakeChangeDirectionEmitter)="manageActions($event)" snake/>
+      <snake-food [food$]="food$" food/>
+    </snake-board>
   </div>
 </section>

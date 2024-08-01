@@ -19,3 +19,7 @@ export const getSnakeScore = createSelector(
   SnakeStateSelector,
   s => s.score,
 );
+export const getIsPlaying = createSelector(
+  SnakeStateSelector,
+  s => s.isPlaying,
+)

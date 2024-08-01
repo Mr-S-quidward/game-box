@@ -1,5 +1,6 @@
 .snake-segments {
-  position: absolute;
+  border: 0.5px solid white;
+  position: fixed;
   width: 20px;
   height: 20px;
   background-color: black;

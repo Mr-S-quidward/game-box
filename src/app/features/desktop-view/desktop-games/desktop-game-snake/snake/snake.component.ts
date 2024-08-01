@@ -21,8 +21,12 @@ export class SnakeComponent {
 
   @HostListener("window:keydown", ["$event"])
   handleKeyDown(event: KeyboardEvent): void {
-    const direction = event.key as SnakeMovementsEnum;
-    this.emitSnakeChangeDirection(direction);
+    const isArrowsKey: boolean = Object.keys(SnakeMovementsEnum)
+      .map(key => SnakeMovementsEnum[key as keyof typeof SnakeMovementsEnum]).includes(event.key as SnakeMovementsEnum);
+    if (isArrowsKey) {
+      const direction = event.key as SnakeMovementsEnum;
+      this.emitSnakeChangeDirection(direction);
+    }
   }
 
   emitSnakeChangeDirection(direction: SnakeMovementsEnum): void {

@@ -7,7 +7,7 @@ import {generateNewFood} from "../../../../../shared/tools/global-functions/gene
 import {IElementBoundingPoints} from "../../../../../shared/models/interfaces/element-bounding-points.interface";
 import {ElementIntersecting} from "../../../../../shared/tools/global-functions/element-intersecting.func";
 import {IPosition} from "../../../../models/interfaces/position.interface";
-import {ISnakeBoard} from "../models/interfaces/snake-board.interface";
+import {SnakeSegments} from "../models/interfaces/snake.interface";
 
 export const initialSnakeState: SnakeStateModel = {
   board: {
@@ -19,22 +19,22 @@ export const initialSnakeState: SnakeStateModel = {
     }
   },
   snake: [
-    {
+    new SnakeSegments({
       x: window.innerWidth / 2,
       y: window.innerHeight / 2,
-    },
-    {
-      x: (window.innerWidth / 2) - 20,
+    }),
+    new SnakeSegments({
+      x: window.innerWidth / 2 - 20,
       y: window.innerHeight / 2,
-    },
-    {
-      x: (window.innerWidth / 2) - 40,
+    }),
+    new SnakeSegments({
+      x: window.innerWidth / 2 - 40,
       y: window.innerHeight / 2,
-    },
-    {
-      x: (window.innerWidth / 2) - 60,
+    }),
+    new SnakeSegments({
+      x: window.innerWidth / 2 - 60,
       y: window.innerHeight / 2,
-    },
+    }),
   ],
   food: {
     x: (window.innerWidth / 2) + 60,
@@ -49,25 +49,25 @@ export const initialSnakeState: SnakeStateModel = {
 export const snakeReducer = createReducer(
   initialSnakeState,
   on(SnakeActions.startGame, state => ({
-    ...state,
+    ...initialSnakeState,
     isPlaying: true,
   })),
   on(SnakeActions.initializeBoard, (state, {snakeBoard}) => ({
     ...state,
     board: snakeBoard,
     snake: [
-      {
+      new SnakeSegments({
         x: snakeBoard.width / 2 + snakeBoard.position.x,
         y: snakeBoard.height / 2 + snakeBoard.position.y,
-      },
-      {
+      }),
+      new SnakeSegments({
         x: snakeBoard.width / 2 - 20 + snakeBoard.position.x,
         y: snakeBoard.height / 2 + snakeBoard.position.y,
-      },
-      {
+      }),
+      new SnakeSegments({
         x: snakeBoard.width / 2 - (2 * 20) + snakeBoard.position.x,
         y: snakeBoard.height / 2 + snakeBoard.position.y,
-      },
+      }),
     ],
     food: {
       x: snakeBoard.width / 2 + (3 * 20) + snakeBoard.position.x,
@@ -82,9 +82,9 @@ export const snakeReducer = createReducer(
   on(SnakeActions.moveSnake, state => {
     const newSnake = [...state.snake];
     const head = newSnake[0];
-    const newHead = getNewHeadPosition(head, state.direction);
+    const newHeadPosition = getNewHeadPosition(head.position, state.direction);
 
-    newSnake.unshift(newHead);
+    newSnake.unshift({id: head.id, position: newHeadPosition});
     newSnake.pop();
 
     return {
@@ -100,13 +100,13 @@ export const snakeReducer = createReducer(
       }
       while (state.snake.some(segment => {
         const segmentElement: IElementBoundingPoints = {
-          A: {x: segment.x, y: segment.y},
-          B: {x: segment.x + 20, y: segment.y},
-          C: {x: segment.x + 20, y: segment.y + 20},
-          D: {x: segment.x, y: segment.y + 20},
+          A: {x: segment.position.x, y: segment.position.y},
+          B: {x: segment.position.x + 20, y: segment.position.y},
+          C: {x: segment.position.x + 20, y: segment.position.y + 20},
+          D: {x: segment.position.x, y: segment.position.y + 20},
         }
         return ElementIntersecting(segmentElement, food);
-      }))
+      }));
       return food;
     }
     const newFood = _foodValidator(() => generateNewFood(state.board, 20));

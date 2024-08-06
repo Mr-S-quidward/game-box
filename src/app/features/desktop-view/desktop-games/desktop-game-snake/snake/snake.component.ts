@@ -1,9 +1,9 @@
 import {Component, EventEmitter, HostListener, Input, Output} from '@angular/core';
 import {Observable} from "rxjs";
-import {IPosition} from "../../../../../core/models/interfaces/position.interface";
 import {AsyncPipe, JsonPipe} from "@angular/common";
 import {SnakeMovementsEnum} from "../../../../../core/allFeatures/games/snake/models/enums/snake-movements.enum";
 import {SnakeActionsFormModel} from "../../../../../core/allFeatures/games/snake/models/snake-actions-form.model";
+import {ISnakeSegments} from "../../../../../core/allFeatures/games/snake/models/interfaces/snake.interface";
 
 @Component({
   selector: 'snake',
@@ -16,7 +16,7 @@ import {SnakeActionsFormModel} from "../../../../../core/allFeatures/games/snake
   styleUrl: './snake.component.scss'
 })
 export class SnakeComponent {
-  @Input() snake$!: Observable<IPosition[]>;
+  @Input() snake$!: Observable<ISnakeSegments[]>;
   @Output() snakeChangeDirectionEmitter = new EventEmitter<SnakeActionsFormModel>();
 
   @HostListener("window:keydown", ["$event"])

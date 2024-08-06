@@ -9,7 +9,8 @@ import {provideStoreDevtools} from '@ngrx/store-devtools';
 import {_RootStore} from "./core/allFeatures/root.store";
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({eventCoalescing: true}),
+  providers: [
+    provideZoneChangeDetection({eventCoalescing: true}),
     provideRouter(routes),
     provideAnimationsAsync(),
     provideStoreDevtools({maxAge: 25, logOnly: !isDevMode()}),

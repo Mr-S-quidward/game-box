@@ -16,6 +16,7 @@ import * as SnakeActions from "../../../../core/allFeatures/games/snake/store/sn
 import {SnakeActionsFormModel} from "../../../../core/allFeatures/games/snake/models/snake-actions-form.model";
 import {AsyncPipe} from "@angular/common";
 import {ISnakeBoard} from "../../../../core/allFeatures/games/snake/models/interfaces/snake-board.interface";
+import {ISnakeSegments} from "../../../../core/allFeatures/games/snake/models/interfaces/snake.interface";
 
 @Component({
   selector: 'desktop-game-snake',
@@ -24,13 +25,13 @@ import {ISnakeBoard} from "../../../../core/allFeatures/games/snake/models/inter
     SnakeBoardComponent,
     SnakeComponent,
     SnakeFoodComponent,
-    AsyncPipe
+    AsyncPipe,
   ],
   templateUrl: './desktop-game-snake.component.html',
-  styleUrl: './desktop-game-snake.component.scss'
+  styleUrl: './desktop-game-snake.component.scss',
 })
 export class DesktopGameSnakeComponent implements OnInit {
-  snake$: Observable<IPosition[]>;
+  snake$: Observable<ISnakeSegments[]>;
   food$: Observable<IPosition>;
   score$: Observable<number>;
   lives$: Observable<number>;
@@ -47,7 +48,6 @@ export class DesktopGameSnakeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.snakeStore.dispatch(SnakeActions.initializeBoard());
   }
 
   onStartGame(snakeBoard: ISnakeBoard): void {

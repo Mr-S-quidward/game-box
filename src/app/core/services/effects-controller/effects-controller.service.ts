@@ -21,6 +21,11 @@ export class EffectsControllerService implements OnDestroy {
     return this.stopListening$;
   }
 
+  manualStop(): Observable<void> {
+    this.stopListening$.next();
+    return this.stopListening$;
+  }
+
   protected checkIfOutOfEffectScope(url: string): void {
     this.subscription = this.router.events.pipe(
       filter(events => events instanceof NavigationEnd),

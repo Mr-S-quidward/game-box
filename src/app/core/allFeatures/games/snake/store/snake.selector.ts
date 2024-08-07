@@ -22,4 +22,12 @@ export const getSnakeScore = createSelector(
 export const getIsPlaying = createSelector(
   SnakeStateSelector,
   s => s.isPlaying,
-)
+);
+export const getSnakeBoard = createSelector(
+  SnakeStateSelector,
+  s => s.board,
+);
+export const getSnakeDirection = createSelector(
+  SnakeStateSelector,
+  s => s.direction,
+);

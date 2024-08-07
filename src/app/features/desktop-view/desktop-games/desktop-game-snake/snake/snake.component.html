@@ -6,5 +6,10 @@
   {{ (snake$ | async)![0] | json }}
 </div>
 <div>
-  {{ (snake$ | async)!.slice(1, (snake$ | async)!.length) | json }}
+  <span>
+    <button (click)="onClickPlayButton($event)">play</button>
+  </span>
+  <span>
+    <button (click)="onClickPauseButton($event)">pause</button>
+  </span>
 </div>

@@ -33,8 +33,13 @@ export class SnakeEffect {
     map((action) => SnakeActions.initializeBoard({snakeBoard: action.snakeBoard})),
   ));
 
-  moveSnake$ = createEffect(() => this.actions$.pipe(
+  initializeBoard$ = createEffect(() => this.actions$.pipe(
     ofType(SnakeActions.initializeBoard),
+    map((action) => SnakeActions.runGame({snakeBoard: action.snakeBoard})),
+  ));
+
+  runGame$ = createEffect(() => this.actions$.pipe(
+    ofType(SnakeActions.runGame),
     switchMap((action) => interval(100).pipe(
       withLatestFrom(this.snakeStore.select('snake')),
       map(([, state]: [number, SnakeStateModel]) => {
@@ -54,6 +59,13 @@ export class SnakeEffect {
         }
       }),
       takeUntil(this.effectsControllerService.stopEffects()),
+    )),
+  ));
+
+  pauseGame$ = createEffect(() => this.actions$.pipe(
+    ofType(SnakeActions.pauseGame),
+    switchMap(() => this.effectsControllerService.manualStop().pipe(
+      map(() => SnakeActions.doNothing()),
     )),
   ));
 

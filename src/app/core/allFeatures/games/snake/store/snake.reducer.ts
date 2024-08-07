@@ -48,7 +48,7 @@ export const initialSnakeState: SnakeStateModel = {
 
 export const snakeReducer = createReducer(
   initialSnakeState,
-  on(SnakeActions.startGame, state => ({
+  on(SnakeActions.startGame, () => ({
     ...initialSnakeState,
     isPlaying: true,
   })),
@@ -73,7 +73,15 @@ export const snakeReducer = createReducer(
       x: snakeBoard.width / 2 + (3 * 20) + snakeBoard.position.x,
       y: snakeBoard.height / 2 + snakeBoard.position.y,
     },
-    direction: initialSnakeState.direction,
+  })),
+  on(SnakeActions.runGame, (state, {snakeBoard}) => ({
+    ...state,
+    board: snakeBoard,
+    isPlaying: true,
+  })),
+  on(SnakeActions.pauseGame, (state) => ({
+    ...state,
+    isPlaying: false,
   })),
   on(SnakeActions.changeDirection, (state, {form}) => ({
     ...state,
@@ -84,7 +92,7 @@ export const snakeReducer = createReducer(
     const head = newSnake[0];
     const newHeadPosition = getNewHeadPosition(head.position, state.direction);
 
-    newSnake.unshift({id: head.id, position: newHeadPosition});
+    newSnake.unshift(new SnakeSegments(newHeadPosition));
     newSnake.pop();
 
     return {
@@ -110,7 +118,7 @@ export const snakeReducer = createReducer(
       return food;
     }
     const newFood = _foodValidator(() => generateNewFood(state.board, 20));
-    const newSnake = [...state.snake, state.snake[state.snake.length - 1]];
+    const newSnake = [...state.snake, new SnakeSegments(state.snake[state.snake.length - 1].position)];
     return {
       ...state,
       food: newFood,

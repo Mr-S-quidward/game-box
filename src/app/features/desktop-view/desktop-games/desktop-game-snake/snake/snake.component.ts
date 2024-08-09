@@ -1,9 +1,10 @@
 import {Component, EventEmitter, HostListener, Input, Output} from '@angular/core';
-import {filter, Observable} from "rxjs";
+import {Observable} from "rxjs";
 import {AsyncPipe, JsonPipe} from "@angular/common";
 import {SnakeMovementsEnum} from "../../../../../core/allFeatures/games/snake/models/enums/snake-movements.enum";
 import {SnakeActionsFormModel} from "../../../../../core/allFeatures/games/snake/models/snake-actions-form.model";
 import {ISnakeSegments} from "../../../../../core/allFeatures/games/snake/models/interfaces/snake.interface";
+import {MatIcon} from "@angular/material/icon";
 
 @Component({
   selector: 'snake',
@@ -11,6 +12,7 @@ import {ISnakeSegments} from "../../../../../core/allFeatures/games/snake/models
   imports: [
     AsyncPipe,
     JsonPipe,
+    MatIcon,
   ],
   templateUrl: './snake.component.html',
   styleUrl: './snake.component.scss',
@@ -19,11 +21,14 @@ import {ISnakeSegments} from "../../../../../core/allFeatures/games/snake/models
   ]
 })
 export class SnakeComponent {
+  @Input() lives$!: Observable<number>;
   @Input() snake$!: Observable<ISnakeSegments[]>;
   @Input() directions$!: Observable<SnakeMovementsEnum>;
+  @Input() isPlaying$!: Observable<boolean>;
   @Output() snakeChangeDirectionEmitter = new EventEmitter<SnakeActionsFormModel>();
   @Output() playEmitter = new EventEmitter<void>();
   @Output() pauseEmitter = new EventEmitter<void>();
+  @Output() resetEmitter = new EventEmitter<void>();
 
   constructor(
     private asyncPipe: AsyncPipe,
@@ -35,6 +40,8 @@ export class SnakeComponent {
     if (this.keyDownInteractionValidator(event)) {
       if (event.key === 'p' || event.key === 'P') {
         this.onKeyDownPause();
+      } else if (event.key === 'r' || event.key === 'R') {
+        this.onKeyDownReset();
       } else if (event.key === 'Enter') {
         this.onKeyDownPlay();
       } else if (this.keyDownArrowsValidator(event)) {
@@ -48,7 +55,7 @@ export class SnakeComponent {
     const key: string = ev.key;
     const isArrowsKey: boolean = Object.keys(SnakeMovementsEnum)
       .map(key => SnakeMovementsEnum[key as keyof typeof SnakeMovementsEnum]).includes(ev.key as SnakeMovementsEnum);
-    return (key === 'p' || key === 'P' || key === 'Enter' || isArrowsKey);
+    return (key === 'p' || key === 'P' || key === 'r' || key === 'R' || key === 'Enter' || isArrowsKey);
   }
 
   protected keyDownArrowsValidator(ev: KeyboardEvent): boolean {
@@ -74,6 +81,15 @@ export class SnakeComponent {
 
   onKeyDownPause(): void {
     this.pauseEmitter.emit();
+  }
+
+  onKeyDownReset(): void {
+    this.resetEmitter.emit();
+  }
+
+  onClickResetButton(ev: MouseEvent): void {
+    ev.stopPropagation();
+    this.resetEmitter.emit();
   }
 
   onClickPlayButton(ev: MouseEvent): void {

@@ -2,14 +2,20 @@
   <div [style.left.px]="segment.position.x" [style.top.px]="segment.position.y" class="snake-segments">
   </div>
 }
-<div>
-  {{ (snake$ | async)![0] | json }}
-</div>
-<div>
-  <span>
-    <button (click)="onClickPlayButton($event)">play</button>
-  </span>
-  <span>
-    <button (click)="onClickPauseButton($event)">pause</button>
-  </span>
+<div class="btns-container">
+  @if ((lives$ | async)! > 0) {
+    @if (isPlaying$ | async) {
+      <button class="pause-btn" (click)="onClickPauseButton($event)">
+        <mat-icon>pause</mat-icon>
+      </button>
+    } @else {
+      <button class="play-btn" (click)="onClickPlayButton($event)">
+        <mat-icon>play_arrow</mat-icon>
+      </button>
+    }
+  } @else {
+    <button class="reset-btn" (click)="onClickResetButton($event)">
+      <mat-icon>restart_alt</mat-icon>
+    </button>
+  }
 </div>

@@ -18,6 +18,9 @@ import {AsyncPipe} from "@angular/common";
 import {ISnakeBoard} from "../../../../core/allFeatures/games/snake/models/interfaces/snake-board.interface";
 import {ISnakeSegments} from "../../../../core/allFeatures/games/snake/models/interfaces/snake.interface";
 import {SnakeMovementsEnum} from "../../../../core/allFeatures/games/snake/models/enums/snake-movements.enum";
+import {ActionsManagementService} from "../../../../core/services/manage-actions/actions-management.service";
+import {IActionManagement} from "../../../../core/models/interfaces/action-management.interface";
+import {SnakeActionModel} from "../../../../core/allFeatures/games/snake/models/enums/snake-action.model";
 
 @Component({
   selector: 'desktop-game-snake',
@@ -34,7 +37,7 @@ import {SnakeMovementsEnum} from "../../../../core/allFeatures/games/snake/model
     {provide: AsyncPipe},
   ]
 })
-export class DesktopGameSnakeComponent implements OnInit {
+export class DesktopGameSnakeComponent implements OnInit, IActionManagement<SnakeActionModel> {
   snake$: Observable<ISnakeSegments[]>;
   food$: Observable<IPosition>;
   score$: Observable<number>;
@@ -46,6 +49,7 @@ export class DesktopGameSnakeComponent implements OnInit {
   constructor(
     private snakeStore: Store<{ snake: SnakeStateModel }>,
     private asyncPipe: AsyncPipe,
+    private actionManagementService: ActionsManagementService<SnakeActionModel, any>
   ) {
     this.isPlaying$ = snakeStore.select(getIsPlaying);
     this.snake$ = snakeStore.select(getSnake);
@@ -57,6 +61,25 @@ export class DesktopGameSnakeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.registerActions();
+  }
+
+  registerActions(): void {
+    this.actionManagementService.registerActions([
+      {type: SnakeActionModel.startGame, action: this.onStartGame.bind(this)},
+      {type: SnakeActionModel.playGame, action: this.onPlayGame.bind(this)},
+      {type: SnakeActionModel.pauseGame, action: this.onPauseGame.bind(this)},
+      {type: SnakeActionModel.resetGame, action: this.onResetGame.bind(this)},
+      {type: SnakeActionModel.changeSnakeDirection, action: this.onChangeSnakeDirection.bind(this)},
+    ]);
+  }
+
+  handleActions(actionType: SnakeActionModel, ...args: any[]): void {
+    this.actionManagementService.manageActions(actionType, ...args);
+  }
+
+  onResetGame(): void {
+    this.snakeStore.dispatch(SnakeActions.startGame({snakeBoard: this.asyncPipe.transform(this.snakeBoard$)!}));
   }
 
   onStartGame(snakeBoard: ISnakeBoard): void {
@@ -71,7 +94,9 @@ export class DesktopGameSnakeComponent implements OnInit {
     this.snakeStore.dispatch(SnakeActions.pauseGame());
   }
 
-  manageActions(form: SnakeActionsFormModel): void {
+  onChangeSnakeDirection(form: SnakeActionsFormModel): void {
     this.snakeStore.dispatch(SnakeActions.changeDirection({form}));
   }
+
+  protected readonly SnakeActionModel = SnakeActionModel;
 }

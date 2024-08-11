@@ -48,11 +48,10 @@ export const initialSnakeState: SnakeStateModel = {
 
 export const snakeReducer = createReducer(
   initialSnakeState,
-  on(SnakeActions.startGame, () => ({
+  on(SnakeActions.startGame, (): SnakeStateModel => ({
     ...initialSnakeState,
-    isPlaying: true,
   })),
-  on(SnakeActions.initializeBoard, (state, {snakeBoard}) => ({
+  on(SnakeActions.initializeBoard, (state, {snakeBoard}): SnakeStateModel => ({
     ...state,
     board: snakeBoard,
     snake: [
@@ -73,8 +72,9 @@ export const snakeReducer = createReducer(
       x: snakeBoard.width / 2 + (3 * 20) + snakeBoard.position.x,
       y: snakeBoard.height / 2 + snakeBoard.position.y,
     },
+    direction: SnakeMovementsEnum.right,
   })),
-  on(SnakeActions.runGame, (state, {snakeBoard}) => ({
+  on(SnakeActions.runGame, (state, {snakeBoard}): SnakeStateModel => ({
     ...state,
     board: snakeBoard,
     isPlaying: true,
@@ -83,7 +83,7 @@ export const snakeReducer = createReducer(
     ...state,
     isPlaying: false,
   })),
-  on(SnakeActions.changeDirection, (state, {form}) => ({
+  on(SnakeActions.changeDirection, (state, {form}): SnakeStateModel => ({
     ...state,
     direction: form.direction,
   })),
@@ -100,7 +100,7 @@ export const snakeReducer = createReducer(
       snake: newSnake,
     }
   }),
-  on(SnakeActions.eatFood, state => {
+  on(SnakeActions.eatFood, (state): SnakeStateModel => {
     const _foodValidator = (func: () => IPosition): IPosition => {
       let food: IPosition;
       do {
@@ -126,12 +126,13 @@ export const snakeReducer = createReducer(
       score: state.score + 10,
     }
   }),
-  on(SnakeActions.loseLife, state => ({
+  on(SnakeActions.loseLife, (state, {snakeBoard}): SnakeStateModel => ({
     ...state,
+    board: snakeBoard,
     lives: state.lives - 1,
     isPlaying: state.lives > 1,
   })),
-  on(SnakeActions.endGame, state => ({
+  on(SnakeActions.endGame, (state): SnakeStateModel => ({
     ...state,
     isPlaying: false,
   })),

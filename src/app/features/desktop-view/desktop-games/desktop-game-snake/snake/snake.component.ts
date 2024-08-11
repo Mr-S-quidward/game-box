@@ -5,6 +5,8 @@ import {SnakeMovementsEnum} from "../../../../../core/allFeatures/games/snake/mo
 import {SnakeActionsFormModel} from "../../../../../core/allFeatures/games/snake/models/snake-actions-form.model";
 import {ISnakeSegments} from "../../../../../core/allFeatures/games/snake/models/interfaces/snake.interface";
 import {MatIcon} from "@angular/material/icon";
+import {fadeInAnimation, fadeInOutAnimation, fadeOutAnimation} from "../../../../../shared/animations/fade.animation";
+import {MatIconButton} from "@angular/material/button";
 
 @Component({
   selector: 'snake',
@@ -13,11 +15,17 @@ import {MatIcon} from "@angular/material/icon";
     AsyncPipe,
     JsonPipe,
     MatIcon,
+    MatIconButton,
   ],
   templateUrl: './snake.component.html',
   styleUrl: './snake.component.scss',
   providers: [
     {provide: AsyncPipe},
+  ],
+  animations: [
+    fadeInAnimation(),
+    fadeOutAnimation(),
+    fadeInOutAnimation(),
   ]
 })
 export class SnakeComponent {

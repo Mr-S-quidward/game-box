@@ -5,16 +5,16 @@
 <div class="btns-container">
   @if ((lives$ | async)! > 0) {
     @if (isPlaying$ | async) {
-      <button class="pause-btn" (click)="onClickPauseButton($event)">
+      <button @fadeInOut mat-icon-button class="pause-btn" (click)="onClickPauseButton($event)">
         <mat-icon>pause</mat-icon>
       </button>
     } @else {
-      <button class="play-btn" (click)="onClickPlayButton($event)">
+      <button @fadeInOut mat-icon-button class="play-btn" (click)="onClickPlayButton($event)">
         <mat-icon>play_arrow</mat-icon>
       </button>
     }
   } @else {
-    <button class="reset-btn" (click)="onClickResetButton($event)">
+    <button @fadeInOut mat-icon-button class="reset-btn" (click)="onClickResetButton($event)">
       <mat-icon>restart_alt</mat-icon>
     </button>
   }

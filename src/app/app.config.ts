@@ -1,4 +1,4 @@
-import {ApplicationConfig, provideZoneChangeDetection, isDevMode} from '@angular/core';
+import {ApplicationConfig, provideZoneChangeDetection, isDevMode, importProvidersFrom} from '@angular/core';
 import {provideRouter} from '@angular/router';
 
 import {routes} from './app.routes';
@@ -7,6 +7,7 @@ import {provideAnimationsAsync} from '@angular/platform-browser/animations/async
 import {provideEffects} from '@ngrx/effects';
 import {provideStoreDevtools} from '@ngrx/store-devtools';
 import {_RootStore} from "./core/allFeatures/root.store";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,5 +17,8 @@ export const appConfig: ApplicationConfig = {
     provideStoreDevtools({maxAge: 25, logOnly: !isDevMode()}),
     provideStore(_RootStore.reducers),
     provideEffects(_RootStore.effects),
+    importProvidersFrom([
+      BrowserAnimationsModule,
+    ]),
   ]
 };

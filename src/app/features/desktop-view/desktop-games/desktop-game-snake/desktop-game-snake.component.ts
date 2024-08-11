@@ -35,7 +35,7 @@ import {SnakeActionModel} from "../../../../core/allFeatures/games/snake/models/
   styleUrl: './desktop-game-snake.component.scss',
   providers: [
     {provide: AsyncPipe},
-  ]
+  ],
 })
 export class DesktopGameSnakeComponent implements OnInit, IActionManagement<SnakeActionModel> {
   snake$: Observable<ISnakeSegments[]>;

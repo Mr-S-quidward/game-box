@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {DesktopAuthRoutes} from "../desktop-auth.routes";
 import {Router, RouterLink, RouterLinkActive} from "@angular/router";
-import {ActionsManagementService} from "../../../../core/services/manage-actions/actions-management.service";
-import {AuthActionModel} from "../../../../core/allFeatures/auth/models/action.model";
+import {ActionsManagementService} from "../../../../core/services/actions-management/actions-management.service";
+import {AuthActionModel} from "../../../../core/allFeatures/auth/models/auth-action.model";
+import {IActionManagement} from "../../../../core/models/interfaces/action-management.interface";
 
 @Component({
   selector: 'desktop-auth-main',
@@ -14,7 +15,7 @@ import {AuthActionModel} from "../../../../core/allFeatures/auth/models/action.m
   templateUrl: './desktop-auth-main.component.html',
   styleUrl: './desktop-auth-main.component.scss'
 })
-export class DesktopAuthMainComponent implements OnInit {
+export class DesktopAuthMainComponent implements OnInit, IActionManagement<AuthActionModel> {
   protected readonly authRoutes = DesktopAuthRoutes.filter(v => v.path!.length > 0);
 
   constructor(

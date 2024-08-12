@@ -1,0 +1,32 @@
+<div class="snake-board">
+  <div class="snake-score-board">
+    <div>
+      <h1>
+        Score: {{ score$ | async }}
+      </h1>
+      <h1>
+        Lives: {{ lives$ | async }}
+      </h1>
+    </div>
+  </div>
+  <div class="snake-crawling-field-frame">
+    <div class="snake-crawling-field" #snake_crawling_field>
+      <ng-content select="[food]"></ng-content>
+      <ng-content select="[snake]"></ng-content>
+    </div>
+    @if (showInfo) {
+      <div class="info-container">
+        <ul>
+          @for (info of infoList; track info.exp) {
+            <li>
+              {{ info.exp }}
+              @if (info.icon.length > 0) {
+                <mat-icon>{{ info.icon }}</mat-icon>
+              }
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </div>
+</div>

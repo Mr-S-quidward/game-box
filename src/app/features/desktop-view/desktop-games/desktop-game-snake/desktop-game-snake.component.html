@@ -1,1 +1,13 @@
-<p>desktop-snake-game works!</p>
+<section class="desktop-frame centered">
+  <div class="desktop-content-container centered">
+    <snake-board [lives$]="lives$" [score$]="score$"
+                 (snakeBoardInitializeEmitter)="handleActions(SnakeActionModel.startGame, $event)">
+      <snake snake [snake$]="snake$" [directions$]="direction$" [isPlaying$]="isPlaying$" [lives$]="lives$"
+             (playEmitter)="handleActions(SnakeActionModel.playGame)"
+             (pauseEmitter)="handleActions(SnakeActionModel.pauseGame)"
+             (resetEmitter)="handleActions(SnakeActionModel.resetGame)"
+             (snakeChangeDirectionEmitter)="handleActions(SnakeActionModel.changeSnakeDirection, $event)"/>
+      <snake-food food [food$]="food$"/>
+    </snake-board>
+  </div>
+</section>

@@ -1,0 +1,5 @@
+@if (!!food$) {
+  <div class="snake-food" [style.left.px]="(food$ | async)!.x" [style.top.px]="(food$ | async)!.y">
+
+  </div>
+}

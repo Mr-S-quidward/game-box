@@ -2,29 +2,44 @@ import {SnakeMovementsEnum} from "../models/enums/snake-movements.enum";
 import {SnakeStateModel} from "../models/snake-state.model";
 import {createReducer, on} from "@ngrx/store";
 import * as SnakeActions from "./snake.action";
+import {getNewHeadPosition} from "../../../../../shared/tools/global-functions/get-new-head-position.func";
+import {generateNewFood} from "../../../../../shared/tools/global-functions/generate-new-food.func";
+import {IElementBoundingPoints} from "../../../../../shared/models/interfaces/element-bounding-points.interface";
+import {ElementIntersecting} from "../../../../../shared/tools/global-functions/element-intersecting.func";
 import {IPosition} from "../../../../models/interfaces/position.interface";
+import {SnakeSegments} from "../models/interfaces/snake.interface";
 
 export const initialSnakeState: SnakeStateModel = {
-  board: {size: {x: 800, y: 800}},
+  board: {
+    width: 800,
+    height: 800,
+    position: {
+      x: 0,
+      y: 0,
+    }
+  },
   snake: [
-    {
+    new SnakeSegments({
       x: window.innerWidth / 2,
       y: window.innerHeight / 2,
-    },
-    {
-      x: (window.innerWidth / 2) - 1,
+    }),
+    new SnakeSegments({
+      x: window.innerWidth / 2 - 20,
       y: window.innerHeight / 2,
-    },
-    {
-      x: (window.innerWidth / 2) - 2,
+    }),
+    new SnakeSegments({
+      x: window.innerWidth / 2 - 40,
       y: window.innerHeight / 2,
-    },
-    {
-      x: (window.innerWidth / 2) - 3,
+    }),
+    new SnakeSegments({
+      x: window.innerWidth / 2 - 60,
       y: window.innerHeight / 2,
-    },
+    }),
   ],
-  food: {x: 15, y: 15},
+  food: {
+    x: (window.innerWidth / 2) + 60,
+    y: window.innerHeight / 2,
+  },
   score: 0,
   lives: 5,
   direction: SnakeMovementsEnum.right,
@@ -33,37 +48,51 @@ export const initialSnakeState: SnakeStateModel = {
 
 export const snakeReducer = createReducer(
   initialSnakeState,
-  on(SnakeActions.startGame, state => ({
+  on(SnakeActions.startGame, (): SnakeStateModel => ({
+    ...initialSnakeState,
+  })),
+  on(SnakeActions.initializeBoard, (state, {snakeBoard}): SnakeStateModel => ({
     ...state,
+    board: snakeBoard,
+    snake: [
+      new SnakeSegments({
+        x: snakeBoard.width / 2 + snakeBoard.position.x,
+        y: snakeBoard.height / 2 + snakeBoard.position.y,
+      }),
+      new SnakeSegments({
+        x: snakeBoard.width / 2 - 20 + snakeBoard.position.x,
+        y: snakeBoard.height / 2 + snakeBoard.position.y,
+      }),
+      new SnakeSegments({
+        x: snakeBoard.width / 2 - (2 * 20) + snakeBoard.position.x,
+        y: snakeBoard.height / 2 + snakeBoard.position.y,
+      }),
+    ],
+    food: {
+      x: snakeBoard.width / 2 + (3 * 20) + snakeBoard.position.x,
+      y: snakeBoard.height / 2 + snakeBoard.position.y,
+    },
+    direction: SnakeMovementsEnum.right,
+  })),
+  on(SnakeActions.runGame, (state, {snakeBoard}): SnakeStateModel => ({
+    ...state,
+    board: snakeBoard,
     isPlaying: true,
   })),
-  on(SnakeActions.initializeBoard, state => ({
+  on(SnakeActions.pauseGame, (state) => ({
     ...state,
+    isPlaying: false,
   })),
-  on(SnakeActions.changeDirection, (state, {form}) => ({
+  on(SnakeActions.changeDirection, (state, {form}): SnakeStateModel => ({
     ...state,
     direction: form.direction,
   })),
   on(SnakeActions.moveSnake, state => {
     const newSnake = [...state.snake];
     const head = newSnake[0];
-    let newHead;
-    switch (state.direction) {
-      case SnakeMovementsEnum.up:
-        newHead = {x: head.x, y: head.y - 1};
-        break;
-      case SnakeMovementsEnum.down:
-        newHead = {x: head.x, y: head.y + 1};
-        break;
-      case SnakeMovementsEnum.left:
-        newHead = {x: head.x - 1, y: head.y};
-        break;
-      case SnakeMovementsEnum.right:
-        newHead = {x: head.x + 1, y: head.y};
-        break;
-    }
+    const newHeadPosition = getNewHeadPosition(head.position, state.direction);
 
-    newSnake.unshift(newHead);
+    newSnake.unshift(new SnakeSegments(newHeadPosition));
     newSnake.pop();
 
     return {
@@ -71,9 +100,25 @@ export const snakeReducer = createReducer(
       snake: newSnake,
     }
   }),
-  on(SnakeActions.eatFood, state => {
-    const newFood = generateNewFood();
-    const newSnake = [...state.snake, state.snake[state.snake.length - 1]];
+  on(SnakeActions.eatFood, (state): SnakeStateModel => {
+    const _foodValidator = (func: () => IPosition): IPosition => {
+      let food: IPosition;
+      do {
+        food = func();
+      }
+      while (state.snake.some(segment => {
+        const segmentElement: IElementBoundingPoints = {
+          A: {x: segment.position.x, y: segment.position.y},
+          B: {x: segment.position.x + 20, y: segment.position.y},
+          C: {x: segment.position.x + 20, y: segment.position.y + 20},
+          D: {x: segment.position.x, y: segment.position.y + 20},
+        }
+        return ElementIntersecting(segmentElement, food);
+      }));
+      return food;
+    }
+    const newFood = _foodValidator(() => generateNewFood(state.board, 20));
+    const newSnake = [...state.snake, new SnakeSegments(state.snake[state.snake.length - 1].position)];
     return {
       ...state,
       food: newFood,
@@ -81,17 +126,18 @@ export const snakeReducer = createReducer(
       score: state.score + 10,
     }
   }),
-  on(SnakeActions.loseLife, state => ({
+  on(SnakeActions.loseLife, (state, {snakeBoard}): SnakeStateModel => ({
     ...state,
+    board: snakeBoard,
     lives: state.lives - 1,
     isPlaying: state.lives > 1,
+  })),
+  on(SnakeActions.endGame, (state): SnakeStateModel => ({
+    ...state,
+    isPlaying: false,
   })),
 )
 
 export function SnakeReducer(state: any, action: any) {
   return snakeReducer(state, action);
-}
-
-function generateNewFood(): IPosition {
-  return {x: Math.floor(Math.random() * 20), y: Math.floor(Math.random() * 20)};
 }

@@ -3,62 +3,120 @@ import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {Store} from "@ngrx/store";
 import {SnakeStateModel} from "../models/snake-state.model";
 import * as SnakeActions from "./snake.action";
-import {interval, map, switchMap, withLatestFrom} from "rxjs";
+import {interval, map, switchMap, takeUntil, withLatestFrom} from "rxjs";
 import {SnakeMovementsEnum} from "../models/enums/snake-movements.enum";
 import {IPosition} from "../../../../models/interfaces/position.interface";
+import {ElementIntersecting} from "../../../../../shared/tools/global-functions/element-intersecting.func";
+import {IElementBoundingPoints} from "../../../../../shared/models/interfaces/element-bounding-points.interface";
+import {getNewHeadPosition} from "../../../../../shared/tools/global-functions/get-new-head-position.func";
+import {ISnakeBoard} from "../models/interfaces/snake-board.interface";
+import {EffectsControllerService} from "../../../../services/effects-controller/effects-controller.service";
 
 @Injectable()
 export class SnakeEffect {
   actions$ = inject(Actions);
 
   constructor(
-    // private actions$: Actions,
+    private effectsControllerService: EffectsControllerService,
     private snakeStore: Store<{ snake: SnakeStateModel }>,
   ) {
+    this.effectsControllerService.getScopeURL("snake");
   }
 
-  moveSnake$ = createEffect(() => this.actions$.pipe(
+  startGame$ = createEffect(() => this.actions$.pipe(
     ofType(SnakeActions.startGame),
-    switchMap(() => interval(200).pipe(
+    map((action) => SnakeActions.initializeBoard({snakeBoard: action.snakeBoard})),
+  ));
+
+  loseLife$ = createEffect(() => this.actions$.pipe(
+    ofType(SnakeActions.loseLife),
+    map((action) => SnakeActions.initializeBoard({snakeBoard: action.snakeBoard})),
+  ));
+
+  initializeBoard$ = createEffect(() => this.actions$.pipe(
+    ofType(SnakeActions.initializeBoard),
+    map((action) => SnakeActions.runGame({snakeBoard: action.snakeBoard})),
+  ));
+
+  runGame$ = createEffect(() => this.actions$.pipe(
+    ofType(SnakeActions.runGame),
+    switchMap((action) => interval(100).pipe(
       withLatestFrom(this.snakeStore.select('snake')),
       map(([, state]: [number, SnakeStateModel]) => {
         const head = state.snake[0];
         const food = state.food;
-        const newHead = this.getNewHeadPosition(head, state.direction);
-
-        if (this.isCollision(newHead, state.snake) || this.isOutOfBounds(newHead)) {
-          return SnakeActions.loseLife();
-        } else if (this.isFoodCollision(newHead, food)) {
-          return SnakeActions.eatFood();
+        const newHeadPosition = getNewHeadPosition(head.position, state.direction);
+        if (state.lives > 0) {
+          if (this.isSelfCollision(newHeadPosition, state.snake.map(s => s.position)) || this.isOutOfBounds(newHeadPosition, action.snakeBoard, 20, state.direction)) {
+            return SnakeActions.loseLife({snakeBoard: action.snakeBoard});
+          } else if (this.isFoodCollision(newHeadPosition, food, state.direction)) {
+            return SnakeActions.eatFood();
+          } else {
+            return SnakeActions.moveSnake();
+          }
         } else {
-          return SnakeActions.moveSnake();
+          return SnakeActions.endGame();
         }
       }),
+      takeUntil(this.effectsControllerService.stopEffects()),
     )),
   ));
 
-  private getNewHeadPosition(head: IPosition, direction: SnakeMovementsEnum): IPosition {
+  pauseGame$ = createEffect(() => this.actions$.pipe(
+    ofType(SnakeActions.pauseGame),
+    switchMap(() => this.effectsControllerService.manualStop().pipe(
+      map(() => SnakeActions.doNothing()),
+    )),
+  ));
+
+  private isSelfCollision(newHeadPosition: IPosition, snake: IPosition[]): boolean {
+    return snake.some(segment => segment.x === newHeadPosition.x && segment.y === newHeadPosition.y);
+  }
+
+  private isOutOfBounds(newHeadPosition: IPosition, snakeBoard: ISnakeBoard, snakeSize: number, direction: SnakeMovementsEnum): boolean {
+    const boardElement: IElementBoundingPoints = {
+      A: {x: snakeBoard.position.x, y: snakeBoard.position.y},
+      B: {x: snakeBoard.position.x + snakeBoard.width, y: snakeBoard.position.y},
+      C: {x: snakeBoard.position.x + snakeBoard.width, y: snakeBoard.position.y + snakeBoard.height},
+      D: {x: snakeBoard.position.x, y: snakeBoard.position.y + snakeBoard.height},
+    }
+
     switch (direction) {
-      case SnakeMovementsEnum.up:
-        return {x: head.x, y: head.y - 1};
-      case SnakeMovementsEnum.down:
-        return {x: head.x, y: head.y + 1};
-      case SnakeMovementsEnum.left:
-        return {x: head.x - 1, y: head.y};
       case SnakeMovementsEnum.right:
-        return {x: head.x + 1, y: head.y};
+        return !(ElementIntersecting(boardElement, {x: newHeadPosition.x + snakeSize, y: newHeadPosition.y})
+          && ElementIntersecting(boardElement, {x: newHeadPosition.x + snakeSize, y: newHeadPosition.y + snakeSize}));
+      case SnakeMovementsEnum.left:
+        return !(ElementIntersecting(boardElement, newHeadPosition)
+          && ElementIntersecting(boardElement, {x: newHeadPosition.x, y: newHeadPosition.y + snakeSize}));
+      case SnakeMovementsEnum.up:
+        return !(ElementIntersecting(boardElement, newHeadPosition)
+          && ElementIntersecting(boardElement, {x: newHeadPosition.x + snakeSize, y: newHeadPosition.y}));
+      case SnakeMovementsEnum.down:
+        return !(ElementIntersecting(boardElement, {x: newHeadPosition.x, y: newHeadPosition.y + snakeSize})
+          && ElementIntersecting(boardElement, {x: newHeadPosition.x + snakeSize, y: newHeadPosition.y + snakeSize}));
     }
   }
 
-  private isCollision(newHead: IPosition, snake: IPosition[]): boolean {
-    return snake.some(segment => segment.x === newHead.x && segment.y === newHead.y);
-  }
-
-  private isOutOfBounds(position: IPosition): boolean {
-    return position.x < 0 || position.x >= 20 || position.y < 0 || position.y >= 20;
-  }
-
-  private isFoodCollision(newHead: IPosition, food: IPosition): boolean {
-    return newHead.x === food.x && newHead.y === food.y;
+  private isFoodCollision(newHeadPosition: IPosition, food: IPosition, direction: SnakeMovementsEnum): boolean {
+    const foodElement: IElementBoundingPoints = {
+      A: {x: food.x, y: food.y},
+      B: {x: food.x + 20, y: food.y},
+      C: {x: food.x + 20, y: food.y + 20},
+      D: {x: food.x, y: food.y + 20},
+    }
+    switch (direction) {
+      case SnakeMovementsEnum.right:
+        return ElementIntersecting(foodElement, {x: newHeadPosition.x + 20, y: newHeadPosition.y})
+          || ElementIntersecting(foodElement, {x: newHeadPosition.x + 20, y: newHeadPosition.y + 20});
+      case SnakeMovementsEnum.left:
+        return ElementIntersecting(foodElement, newHeadPosition)
+          || ElementIntersecting(foodElement, {x: newHeadPosition.x, y: newHeadPosition.y + 20});
+      case SnakeMovementsEnum.up:
+        return ElementIntersecting(foodElement, newHeadPosition)
+          || ElementIntersecting(foodElement, {x: newHeadPosition.x + 20, y: newHeadPosition.y});
+      case SnakeMovementsEnum.down:
+        return ElementIntersecting(foodElement, {x: newHeadPosition.x, y: newHeadPosition.y + 20})
+          || ElementIntersecting(foodElement, {x: newHeadPosition.x + 20, y: newHeadPosition.y + 20});
+    }
   }
 }

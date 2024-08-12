@@ -58,7 +58,7 @@ export class SnakeComponent implements OnInit {
         this.onKeyDownReset();
       } else if (event.key === 'Enter') {
         this.onKeyDownPlay();
-      } else if (this.keyDownArrowsValidator(event)) {
+      } else if (this.keyDownArrowsValidator(event) && this.asyncPipe.transform(this.isPlaying$)) {
         const nextDirection = event.key as SnakeMovementsEnum;
         this.emitSnakeChangeDirection(nextDirection);
       }

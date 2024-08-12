@@ -2,23 +2,20 @@
   <div [style.left.px]="segment.position.x" [style.top.px]="segment.position.y" class="snake-segments">
   </div>
 }
-<div class="btns-container">
+<div @fadeOut class="btns-container">
   @if ((lives$ | async)! > 0) {
     @if (isPlaying$ | async) {
-      <button @fadeInOut mat-icon-button class="pause-btn"
-              (click)="onClickPauseButton($event)">
-        <mat-icon>pause</mat-icon>
-      </button>
+      @if (showBtns) {
+        <button @fadeInOut mat-icon-button class="pause-btn"
+                (click)="onClickPauseButton($event)">
+          <mat-icon>pause</mat-icon>
+        </button>
+      }
     } @else {
       <button @fadeInOut mat-icon-button class="play-btn"
               (click)="onClickPlayButton($event)">
         <mat-icon>play_arrow</mat-icon>
       </button>
     }
-  } @else {
-    <button @fadeInOut mat-icon-button class="reset-btn"
-            (click)="onClickResetButton($event)">
-      <mat-icon>restart_alt</mat-icon>
-    </button>
   }
 </div>

@@ -2,13 +2,16 @@ import {Component, OnInit} from '@angular/core';
 import {SnakeBoardComponent} from "./snake-board/snake-board.component";
 import {SnakeComponent} from "./snake/snake.component";
 import {SnakeFoodComponent} from "./snake-food/snake-food.component";
-import {Observable} from "rxjs";
+import {Observable, Subscription} from "rxjs";
 import {Store} from "@ngrx/store";
 import {SnakeStateModel} from "../../../../core/allFeatures/games/snake/models/snake-state.model";
 import {
   getIsPlaying,
-  getSnake, getSnakeBoard, getSnakeDirection,
-  getSnakeFood, getSnakeLives,
+  getSnake,
+  getSnakeBoard,
+  getSnakeDirection,
+  getSnakeFood,
+  getSnakeLives,
   getSnakeScore
 } from "../../../../core/allFeatures/games/snake/store/snake.selector";
 import {IPosition} from "../../../../core/models/interfaces/position.interface";
@@ -18,9 +21,14 @@ import {AsyncPipe} from "@angular/common";
 import {ISnakeBoard} from "../../../../core/allFeatures/games/snake/models/interfaces/snake-board.interface";
 import {ISnakeSegments} from "../../../../core/allFeatures/games/snake/models/interfaces/snake.interface";
 import {SnakeMovementsEnum} from "../../../../core/allFeatures/games/snake/models/enums/snake-movements.enum";
-import {ActionsManagementService} from "../../../../core/services/manage-actions/actions-management.service";
+import {ActionsManagementService} from "../../../../core/services/actions-management/actions-management.service";
 import {IActionManagement} from "../../../../core/models/interfaces/action-management.interface";
 import {SnakeActionModel} from "../../../../core/allFeatures/games/snake/models/enums/snake-action.model";
+import {MatDialog} from "@angular/material/dialog";
+import {SnakeModalComponent} from "./snake-modal/snake-modal.component";
+import {
+  SubscriptionManagementService
+} from "../../../../core/services/subscription-management/subscription-management.service";
 
 @Component({
   selector: 'desktop-game-snake',
@@ -35,6 +43,7 @@ import {SnakeActionModel} from "../../../../core/allFeatures/games/snake/models/
   styleUrl: './desktop-game-snake.component.scss',
   providers: [
     {provide: AsyncPipe},
+    {provide: SubscriptionManagementService},
   ],
 })
 export class DesktopGameSnakeComponent implements OnInit, IActionManagement<SnakeActionModel> {
@@ -47,9 +56,11 @@ export class DesktopGameSnakeComponent implements OnInit, IActionManagement<Snak
   direction$: Observable<SnakeMovementsEnum>;
 
   constructor(
+    private actionManagementService: ActionsManagementService<SnakeActionModel, any>,
+    private subscriptionManagementService: SubscriptionManagementService,
     private snakeStore: Store<{ snake: SnakeStateModel }>,
     private asyncPipe: AsyncPipe,
-    private actionManagementService: ActionsManagementService<SnakeActionModel, any>
+    private matDialog: MatDialog,
   ) {
     this.isPlaying$ = snakeStore.select(getIsPlaying);
     this.snake$ = snakeStore.select(getSnake);
@@ -62,6 +73,7 @@ export class DesktopGameSnakeComponent implements OnInit, IActionManagement<Snak
 
   ngOnInit(): void {
     this.registerActions();
+    this.onEndGame();
   }
 
   registerActions(): void {
@@ -94,8 +106,26 @@ export class DesktopGameSnakeComponent implements OnInit, IActionManagement<Snak
     this.snakeStore.dispatch(SnakeActions.pauseGame());
   }
 
+  onEndGame(): void {
+    const sub: Subscription = this.lives$.subscribe(lives => {
+      if (lives === 0) this.openModal();
+    });
+    this.subscriptionManagementService.registerSubscription(sub);
+  }
+
   onChangeSnakeDirection(form: SnakeActionsFormModel): void {
     this.snakeStore.dispatch(SnakeActions.changeDirection({form}));
+  }
+
+  private openModal(): void {
+    const dialog = this.matDialog.open(SnakeModalComponent, {
+      width: "250px",
+      height: "200px",
+    });
+    dialog.afterClosed().subscribe((result) => {
+      if (!!result) this.handleActions(result);
+      //   TODO else close the game
+    });
   }
 
   protected readonly SnakeActionModel = SnakeActionModel;

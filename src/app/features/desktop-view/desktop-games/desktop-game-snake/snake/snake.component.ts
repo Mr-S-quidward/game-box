@@ -1,11 +1,11 @@
-import {Component, EventEmitter, HostListener, Input, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {Observable} from "rxjs";
 import {AsyncPipe, JsonPipe} from "@angular/common";
 import {SnakeMovementsEnum} from "../../../../../core/allFeatures/games/snake/models/enums/snake-movements.enum";
 import {SnakeActionsFormModel} from "../../../../../core/allFeatures/games/snake/models/snake-actions-form.model";
 import {ISnakeSegments} from "../../../../../core/allFeatures/games/snake/models/interfaces/snake.interface";
 import {MatIcon} from "@angular/material/icon";
-import {fadeInAnimation, fadeInOutAnimation, fadeOutAnimation} from "../../../../../shared/animations/fade.animation";
+import {fadeInOutAnimation, fadeOutAnimation} from "../../../../../shared/animations/fade.animation";
 import {MatIconButton} from "@angular/material/button";
 
 @Component({
@@ -23,12 +23,11 @@ import {MatIconButton} from "@angular/material/button";
     {provide: AsyncPipe},
   ],
   animations: [
-    fadeInAnimation(),
     fadeOutAnimation(),
     fadeInOutAnimation(),
   ]
 })
-export class SnakeComponent {
+export class SnakeComponent implements OnInit {
   @Input() lives$!: Observable<number>;
   @Input() snake$!: Observable<ISnakeSegments[]>;
   @Input() directions$!: Observable<SnakeMovementsEnum>;
@@ -38,9 +37,16 @@ export class SnakeComponent {
   @Output() pauseEmitter = new EventEmitter<void>();
   @Output() resetEmitter = new EventEmitter<void>();
 
+  showBtns: boolean = true;
+  hideTimeout: any;
+
   constructor(
     private asyncPipe: AsyncPipe,
   ) {
+  }
+
+  ngOnInit() {
+    this.hideButtonAfterDelay();
   }
 
   @HostListener("window:keydown", ["$event"])
@@ -84,33 +90,43 @@ export class SnakeComponent {
   }
 
   onKeyDownPlay(): void {
+    this.hideButtonAfterDelay();
     this.playEmitter.emit();
   }
 
   onKeyDownPause(): void {
+    this.hideButtonAfterDelay();
     this.pauseEmitter.emit();
   }
 
   onKeyDownReset(): void {
-    this.resetEmitter.emit();
-  }
-
-  onClickResetButton(ev: MouseEvent): void {
-    ev.stopPropagation();
+    this.hideButtonAfterDelay();
     this.resetEmitter.emit();
   }
 
   onClickPlayButton(ev: MouseEvent): void {
     ev.stopPropagation();
+    this.hideButtonAfterDelay();
     this.playEmitter.emit();
   }
 
   onClickPauseButton(ev: MouseEvent): void {
     ev.stopPropagation();
+    this.hideButtonAfterDelay();
     this.pauseEmitter.emit();
   }
 
   emitSnakeChangeDirection(direction: SnakeMovementsEnum): void {
     this.snakeChangeDirectionEmitter.emit({direction});
+  }
+
+  hideButtonAfterDelay(): void {
+    this.showBtns = true;
+    if (this.hideTimeout) {
+      clearTimeout(this.hideTimeout);
+    }
+    this.hideTimeout = setTimeout(() => {
+      this.showBtns = false;
+    }, 1000); // 2000 ms = 2 seconds
   }
 }

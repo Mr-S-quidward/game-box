@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DesktopAuthRoutes} from "../desktop-auth.routes";
 import {Router, RouterLink, RouterLinkActive} from "@angular/router";
-import {ActionsManagementService} from "../../../../core/services/manage-actions/actions-management.service";
+import {ActionsManagementService} from "../../../../core/services/actions-management/actions-management.service";
 import {AuthActionModel} from "../../../../core/allFeatures/auth/models/auth-action.model";
 import {IActionManagement} from "../../../../core/models/interfaces/action-management.interface";
 

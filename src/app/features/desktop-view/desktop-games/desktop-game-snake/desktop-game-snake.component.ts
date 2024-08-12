@@ -25,7 +25,7 @@ import {ActionsManagementService} from "../../../../core/services/actions-manage
 import {IActionManagement} from "../../../../core/models/interfaces/action-management.interface";
 import {SnakeActionModel} from "../../../../core/allFeatures/games/snake/models/enums/snake-action.model";
 import {MatDialog} from "@angular/material/dialog";
-import {SnakeModalComponent} from "./snake-modal/snake-modal.component";
+import {ISnakeModalData, SnakeModalComponent} from "./snake-modal/snake-modal.component";
 import {
   SubscriptionManagementService
 } from "../../../../core/services/subscription-management/subscription-management.service";
@@ -118,11 +118,14 @@ export class DesktopGameSnakeComponent implements OnInit, IActionManagement<Snak
   }
 
   private openModal(): void {
-    const dialog = this.matDialog.open(SnakeModalComponent, {
+    const dialog = this.matDialog.open<SnakeModalComponent, ISnakeModalData, SnakeActionModel>(SnakeModalComponent, {
       width: "250px",
       height: "200px",
+      data: {
+        score$: this.score$,
+      }
     });
-    dialog.afterClosed().subscribe((result) => {
+    dialog.afterClosed().subscribe((result): void => {
       if (!!result) this.handleActions(result);
       //   TODO else close the game
     });

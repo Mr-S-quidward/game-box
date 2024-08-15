@@ -1,1 +1,18 @@
-<p>desktop-login works!</p>
+<section class="desktop-frame centered">
+  <div class="desktop-content-container centered">
+    <div class="flip-card"
+         (mouseenter)="toggleHover('hover')"
+         (mouseleave)="toggleHover('default')">
+      <div [@rotateCard]="cardState" class="flip-card-inner">
+        <div class="flip-card-front">
+          <desktop-login-card-front/>
+        </div>
+        <div class="flip-card-back">
+          <desktop-login-card-back [nameInput]="nameInput"
+                                   [passwordInput]="passwordInput"
+                                   (emailValidatorEmitter)="addEmailValidator($event)"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

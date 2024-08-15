@@ -1,0 +1,22 @@
+<mat-form-field class="text-input" [appearance]="input.appearance">
+  <mat-label class="mat-label">
+    {{ input.inputLabel }}
+  </mat-label>
+  <input matInput
+         autocomplete="{{autocomplete ? 'on' : 'new-'+input.inputName}}"
+         (focusin)="onFocusin()"
+         (focusout)="onFocusout()"
+         [name]="input.inputName"
+         [placeholder]="input.placeholder"
+         [type]="password ? 'password' : 'text'"
+         [formControl]="input.formControl">
+  <button mat-icon-button matSuffix class="btn-input"
+          (click)="onClickInputActionBtn($event)">
+    <mat-icon>close</mat-icon>
+  </button>
+  @if (input.invalid()) {
+    <mat-error>
+      {{ input.errors() }}
+    </mat-error>
+  }
+</mat-form-field>

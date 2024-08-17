@@ -10,10 +10,7 @@
     </ul>
     <p>
       <sub>you don't have an account?
-        <a class="cursor-pointer"
-           (click)="handleActions(AuthActionModel.signInAsGuest, 'menu')">
-          sign in as a guest
-        </a>
+        <cu-link [link]="viewModel.link" (onClickEmitter)="onSignInAsGuest()"/>
       </sub>
     </p>
   </div>

@@ -6,12 +6,12 @@
   </mat-card-header>
   <mat-card-content class="mt-4">
     <form class="d-flex flex-column gap-2">
-      <text-input [input]="nameInput" (onChange)="onChangeNameInput(nameInput)"/>
-      <text-input [input]="passwordInput" [password]="true"/>
+      <text-input [input]="viewModel.usernameInput" (onChange)="onChangeNameInput(viewModel.usernameInput)"/>
+      <text-input [input]="viewModel.passwordInput" [password]="true"/>
       <button mat-raised-button
               color="primary"
               class="w-100 text-capitalize cursor-pointer"
-              [disabled]="true" (click)="onClickLogin()">
+              [disabled]="false" (click)="onClickLogin($event)">
         login
       </button>
     </form>

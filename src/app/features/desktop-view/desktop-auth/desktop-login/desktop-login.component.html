@@ -8,9 +8,9 @@
           <desktop-login-card-front/>
         </div>
         <div class="flip-card-back">
-          <desktop-login-card-back [nameInput]="nameInput"
-                                   [passwordInput]="passwordInput"
-                                   (emailValidatorEmitter)="addEmailValidator($event)"/>
+          <desktop-login-card-back [viewModel]="viewModel"
+                                   (loginEmitter)="handleActions('store', $event)"
+                                   (emailValidatorEmitter)="handleActions(AuthActionModel.addEmailValidator, $event)"/>
         </div>
       </div>
     </div>

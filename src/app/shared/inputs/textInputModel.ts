@@ -1,20 +1,17 @@
 import {BaseInput} from "./base.input";
 import {ValidatorFn} from "@angular/forms";
+import {TextInputConfig} from "../models/configurations/inputs/text-input.config";
 
 export class TextInputModel extends BaseInput<string> {
   placeholder: string;
   appearance: "fill" | "outline";
 
   constructor(
-    inputName: string,
-    inputLabel: string,
-    validators: ValidatorFn | ValidatorFn[] = [],
-    placeholder: string = '',
-    appearance: "fill" | "outline" = "fill",
+    config: TextInputConfig,
   ) {
-    super(inputName, inputLabel, validators);
-    this.placeholder = placeholder;
-    this.appearance = appearance;
+    super(config.inputLabel, config.inputName, config.validators);
+    this.placeholder = config.placeholder ?? '';
+    this.appearance =config.appearance ?? 'fill';
   }
 
   override setValue(value: string, emitEvent: boolean = true): TextInputModel {

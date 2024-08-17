@@ -13,7 +13,7 @@ import {ISnakeBoard} from "../models/interfaces/snake-board.interface";
 import {EffectsControllerService} from "../../../../services/effects-controller/effects-controller.service";
 
 @Injectable()
-export class SnakeEffect {
+export class SnakeEffects {
   actions$ = inject(Actions);
 
   constructor(

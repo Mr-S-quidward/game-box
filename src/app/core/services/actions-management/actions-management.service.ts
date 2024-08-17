@@ -5,7 +5,7 @@ import {IActions} from "../../models/interfaces/actions.interface";
   providedIn: 'root'
 })
 export class ActionsManagementService<TActionsModel, P extends any[]> {
-  private actionMap: Map<TActionsModel, (...args: P) => void> = new Map();
+  private actionMap: Map<TActionsModel | "store", (...args: P) => void> = new Map();
 
   registerActions(actions: IActions<TActionsModel, P>[]): void {
     actions.forEach(({type, action}) => {
@@ -13,7 +13,7 @@ export class ActionsManagementService<TActionsModel, P extends any[]> {
     });
   }
 
-  manageActions(actionType: TActionsModel, ...args: P): void {
+  manageActions(actionType: TActionsModel | "store", ...args: P): void {
     const action = this.actionMap.get(actionType);
     if (!!action) action(...args);
     // TODO throw an error using notification service, pop-ups

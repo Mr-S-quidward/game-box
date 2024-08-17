@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {TextInputComponent} from "../../../../shared/components/inputs/text-input/text-input.component";
 import {TextInputModel} from "../../../../shared/inputs/textInputModel";
 import {Validators} from "@angular/forms";
@@ -10,6 +10,13 @@ import {MatButton} from "@angular/material/button";
 import {DesktopLoginCardBackComponent} from "./desktop-login-card-back/desktop-login-card-back.component";
 import {rotateCardAnimation} from "../../../../shared/animations/rotate-card.animation";
 import {DesktopLoginCardFrontComponent} from "./desktop-login-card-front/desktop-login-card-front.component";
+import {Store} from "@ngrx/store";
+import {AuthStateModel} from "../../../../core/allFeatures/auth/models/authStateModel";
+import {ActionsManagementService} from "../../../../core/services/actions-management/actions-management.service";
+import {AuthActionModel} from "../../../../core/allFeatures/auth/models/enums/auth-action.model";
+import {BaseComponentModel} from "../../../../core/models/components/base-component.model";
+import {InitialLoginViewModel, LoginViewModel} from "../../../../core/allFeatures/auth/models/views/login-view.model";
+import {IActions} from "../../../../core/models/interfaces/actions.interface";
 
 @Component({
   selector: 'desktop-login',
@@ -32,24 +39,24 @@ import {DesktopLoginCardFrontComponent} from "./desktop-login-card-front/desktop
     rotateCardAnimation(),
   ],
 })
-export class DesktopLoginComponent {
+export class DesktopLoginComponent extends BaseComponentModel<LoginViewModel, AuthStateModel, AuthActionModel> implements OnInit {
+  viewModel: LoginViewModel = InitialLoginViewModel();
   cardState: "default" | "hover" = "default";
-  nameInput: TextInputModel =
-    new TextInputModel(
-      'username',
-      'username',
-      [Validators.required],
-      'enter your username or email...',
-      "outline",
-    );
-  passwordInput: TextInputModel =
-    new TextInputModel(
-      'password',
-      'password',
-      [Validators.required],
-      'enter your password...',
-      "outline",
-    );
+  listOfActions: IActions<AuthActionModel, any>[] = [
+    {type: AuthActionModel.addEmailValidator, action: this.addEmailValidator.bind(this)},
+    {type: AuthActionModel.toggleHover, action: this.toggleHover.bind(this)},
+  ];
+
+  constructor(
+    authStore: Store<{ auth: AuthStateModel }>,
+    actionManagementService: ActionsManagementService<AuthActionModel, any>,
+  ) {
+    super(authStore, actionManagementService);
+  }
+
+  ngOnInit(): void {
+    this.registerActions();
+  }
 
   toggleHover(state: "default" | "hover"): void {
     this.cardState = state;
@@ -59,4 +66,6 @@ export class DesktopLoginComponent {
     if (input.getValue().includes("@")) input.addValidators(Validators.email);
     else input.removeValidators(Validators.email);
   }
+
+  protected readonly AuthActionModel = AuthActionModel;
 }

@@ -8,9 +8,12 @@ import {provideEffects} from '@ngrx/effects';
 import {provideStoreDevtools} from '@ngrx/store-devtools';
 import {_RootStore} from "./core/allFeatures/root.store";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {TokenInterceptor} from "./core/interceptors/token.interceptor";
+import {HTTP_INTERCEPTORS, provideHttpClient, withFetch} from "@angular/common/http";
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideHttpClient(withFetch()),
     provideZoneChangeDetection({eventCoalescing: true}),
     provideRouter(routes),
     provideAnimationsAsync(),
@@ -20,5 +23,6 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom([
       BrowserAnimationsModule,
     ]),
+    {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},
   ]
 };

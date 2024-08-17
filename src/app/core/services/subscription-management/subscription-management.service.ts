@@ -3,10 +3,9 @@ import {Subscription} from "rxjs";
 
 @Injectable()
 export class SubscriptionManagementService implements OnDestroy {
-  subscriptions: Subscription[] = [];
+  private subscriptions: Subscription[] = [];
 
   constructor() {
-    console.log('instance');
   }
 
   ngOnDestroy(): void {

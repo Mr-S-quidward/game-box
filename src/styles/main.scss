@@ -2,6 +2,10 @@
 
 /******* Utilities *******/
 
+.w-100 {
+  width: 100%;
+}
+
 .text-capitalize {
   text-transform: capitalize !important;
 }
@@ -16,4 +20,60 @@
 
 .centered {
   margin: 0 auto !important;
+}
+
+.d-flex {
+  display: flex !important;
+}
+
+.d-flex.flex-column {
+  flex-direction: column !important;
+}
+
+.d-flex.align-items-center {
+  align-items: center !important;
+}
+
+.d-flex.justify-content-center {
+  justify-content: center !important;
+}
+
+.d-flex.gap-0 {
+  gap: 0 !important;
+}
+
+.d-flex.gap-1 {
+  gap: min(4px, 0.278vw) !important;
+}
+
+.d-flex.gap-2 {
+  gap: min(8px, 0.556vw) !important;
+}
+
+.d-flex.gap-3 {
+  gap: min(12px, 0.833vw) !important;
+}
+
+.d-flex.gap-4 {
+  gap: min(16px, 1.111vw) !important;
+}
+
+.mt-0 {
+  margin-top: 0 !important;
+}
+
+.mt-1 {
+  margin-top: min(4px, 0.278vw) !important;
+}
+
+.mt-2 {
+  margin-top: min(8px, 0.556vw) !important;
+}
+
+.mt-3 {
+  margin-top: min(12px, 0.833vw) !important;
+}
+
+.mt-4 {
+  margin-top: min(16px, 1.111vw) !important;
 }

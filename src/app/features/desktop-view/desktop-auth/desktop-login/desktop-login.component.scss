@@ -1,0 +1,45 @@
+.desktop-frame {
+  height: 100%;
+}
+
+.desktop-frame > .desktop-content-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.desktop-frame > .desktop-content-container > .flip-card {
+  width: min(400px, 27.778vw);
+  height: min(400px, 27.778vw);
+  background-color: transparent;
+  perspective: 1000px;
+}
+
+.desktop-frame > .desktop-content-container > .flip-card > .flip-card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 600ms ease;
+}
+
+.desktop-frame > .desktop-content-container > .flip-card > .flip-card-inner > .flip-card-front,
+.desktop-frame > .desktop-content-container > .flip-card > .flip-card-inner > .flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.desktop-frame > .desktop-content-container > .flip-card > .flip-card-inner > .flip-card-back {
+  transform: rotateY(180deg);
+}
+
+.desktop-frame > .desktop-content-container > .login-card-frame > .login-form {
+  width: 100%;
+  padding: min(32px, 2.222vw);
+  border-radius: min(16px, 1.111vw);
+}

@@ -1,0 +1,11 @@
+.text-input {
+  width: 100%;
+
+  .mat-label, input::placeholder {
+    text-transform: capitalize !important;
+  }
+}
+
+.btn-input {
+  scale: 0.8;
+}

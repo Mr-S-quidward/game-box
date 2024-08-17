@@ -1,6 +1,5 @@
-import { Component } from '@angular/core';
-import {RouterLink, RouterOutlet, Routes} from "@angular/router";
-import {DesktopAuthRoutes} from "./desktop-auth.routes";
+import {Component} from '@angular/core';
+import {RouterOutlet} from "@angular/router";
 
 @Component({
   selector: 'desktop-auth',
@@ -12,4 +11,7 @@ import {DesktopAuthRoutes} from "./desktop-auth.routes";
   styleUrl: './desktop-auth.component.scss'
 })
 export class DesktopAuthComponent {
+
+  constructor() {
+  }
 }

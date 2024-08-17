@@ -1,0 +1,11 @@
+.login-card {
+  border-radius: min(16px, 1.111vw);
+
+  .app-name-frame {
+    position: absolute;
+    top: 20%;
+    left: 15%;
+    transform: rotate(-45deg);
+    text-transform: capitalize;
+  }
+}

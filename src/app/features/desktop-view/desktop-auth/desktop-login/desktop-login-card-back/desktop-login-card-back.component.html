@@ -1,0 +1,27 @@
+<mat-card class="login-form">
+  <mat-card-header>
+    <mat-card-title class="text-capitalize">
+      login
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="mt-4">
+    <form class="d-flex flex-column gap-2">
+      <text-input [input]="viewModel.usernameInput" (onChange)="onChangeNameInput(viewModel.usernameInput)"/>
+      <text-input [input]="viewModel.passwordInput" [password]="true"/>
+      <button mat-raised-button
+              color="primary"
+              class="w-100 text-capitalize cursor-pointer"
+              [disabled]="false" (click)="onClickLogin($event)">
+        login
+      </button>
+    </form>
+  </mat-card-content>
+  <mat-card-actions>
+    <small class="d-flex text-capitalize gap-2 align-items-center">
+      you don't have an account?
+      <a href="#">
+        create an account
+      </a>
+    </small>
+  </mat-card-actions>
+</mat-card>
